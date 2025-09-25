@@ -1,4 +1,4 @@
-# # Traffic-Simulation-Project
+# # Traffic-Simulation-Project (Co-developed with Vandana Yadav)
 •	Simulate traffic flow at an intersection with realistic vehicle movement.
 •	Implement deadlock prevention to ensure vehicles don’t get stuck.
 •	Optimize traffic flow using algorithms to reduce congestion.
