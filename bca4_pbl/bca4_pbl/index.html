@@ -1,0 +1,409 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <title>Traffic Simulation</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  
+  <!-- Style -->
+  <link rel="stylesheet" href="style.css">
+  <style>
+    .dashboard-container {
+      max-width: 1200px;
+      margin: 0 auto;
+    }
+    /* New styles for vehicle information */
+    .vehicle-info {
+      background-color: #fff;
+      padding: 20px;
+      border-radius: 15px;
+      box-shadow: 0 4px 6px rgba(0,0,0,0.1);
+      margin-bottom: 20px;
+    }
+    .vehicle-table {
+      width: 100%;
+      border-collapse: collapse;
+      margin-top: 10px;
+    }
+    .vehicle-table th {
+      background-color: #f8f9fa;
+      padding: 12px;
+      text-align: left;
+      font-weight: 600;
+      text-transform: uppercase;
+      font-size: 12px;
+      letter-spacing: 0.5px;
+      color: #666;
+    }
+    .vehicle-table td {
+      padding: 12px;
+      border-bottom: 1px solid #eee;
+    }
+    .vehicle-row {
+      transition: background-color 0.3s ease;
+    }
+    .vehicle-row:hover {
+      background-color: #f8f9fa;
+    }
+    .violation-alert {
+      background-color: #ffebee;
+      border-left: 4px solid #f44336;
+    }
+    .normal-status {
+      background-color: #e8f5e9;
+      border-left: 4px solid #4caf50;
+    }
+    .status-badge {
+      padding: 4px 8px;
+      border-radius: 12px;
+      font-size: 12px;
+      font-weight: bold;
+      text-transform: uppercase;
+    }
+    .status-violation {
+      background-color: #ffebee;
+      color: #c62828;
+    }
+    .status-normal {
+      background-color: #e8f5e9;
+      color: #2e7d32;
+    }
+    .speed-warning {
+      color: #f44336;
+      font-weight: bold;
+      animation: blink 1s infinite;
+    }
+    @keyframes blink {
+      50% { opacity: 0.5; }
+    }
+    .fine-amount {
+      color: #f44336;
+      font-weight: bold;
+    }
+    .vehicle-info-header {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      margin-bottom: 15px;
+    }
+    .vehicle-count {
+      font-size: 14px;
+      color: #666;
+    }
+    .alert-badge {
+      background-color: #f44336;
+      color: white;
+      padding: 4px 8px;
+      border-radius: 12px;
+      font-size: 12px;
+      font-weight: bold;
+      margin-left: 10px;
+    }
+  </style>
+
+  
+  
+
+</head>
+<body>
+  <div class="container">
+    <h1>Traffic System Simulation</h1>
+    
+    <!-- Simulation Status Display -->
+    <div id="stats">
+      <div class="stat-item">
+        <p>Vehicles: <span id="vehicle-count">0</span></p>
+      </div>
+      <div class="stat-item">
+        <p>Light Status: <span id="light-status">Red</span></p>
+      </div>
+      <div class="stat-item">
+        <p>System Status: <span id="deadlock-status">Safe</span></p>
+      </div>
+      <div class="stat-item">
+        <div class="stat-value"><i class="fas fa-clock"></i> <span id="simulation-time">00:00</span></div>
+        <div class="stat-label">Simulation Time</div>
+      </div>
+    </div>
+     
+    <!-- Controls -->
+    <div id="controls">
+      <button id="start" class="control-btn">Start Simulation</button>
+      <button id="stop" class="control-btn">Stop Simulation</button>
+      <button id="clear" class="control-btn">Clear Vehicles</button>
+    </div>
+
+    <!-- Canvas Container -->
+    <div id="canvas-container"></div>
+  </div>
+  <div class="vehicle-info">
+    <div class="vehicle-info-header">
+      <h4><i class="fas fa-car"></i> Real-time Intersection Vehicle Information</h4>
+      <div class="vehicle-count">
+        Active Vehicles: <span id="active-vehicles-count">0</span>
+        <span class="alert-badge" id="violation-count">0 Violations</span>
+      </div>
+    </div>
+    <div class="table-responsive">
+      <table class="vehicle-table">
+        <thead>
+          <tr>
+            <th>Vehicle ID</th>
+            <th>Speed</th>
+            <th>Current Position</th>
+            <th>Direction</th>
+            <th>Entry Time</th>
+            <th>Time in Intersection</th>
+            <th>Status</th>
+            <th>Fine</th>
+          </tr>
+        </thead>
+        <tbody id="vehicle-table-body">
+          <!-- Vehicle data will be inserted here -->
+        </tbody>
+      </table>
+    </div>
+  </div>
+
+  <section class="credits-section">
+    <div class="credits-card">
+      <h3>Credits</h3>
+      <p>Traffic Simulation Project</p>
+      <p>Developed for the BCA4 PBL coursework and presented as a smart traffic management dashboard.</p>
+      <div class="credit-tags">
+        <span>Frontend Design</span>
+        <span>Traffic Logic</span>
+        <span>Simulation Engine</span>
+      </div>
+    </div>
+  </section>
+</div>
+
+  <!-- JavaScript Modules (Order matters for dependencies) -->
+  
+  <!-- p5.js Library -->
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/p5.js/1.4.0/p5.js"></script>
+  <script>
+    // Update current time
+    function updateTime() {
+      const now = new Date();
+      document.getElementById('current-time').textContent = 
+        now.toLocaleString();
+    }
+    // Update simulation time
+    function updateSimulationTime() {
+      const timeElement = document.getElementById('simulation-time');
+      let seconds = parseInt(timeElement.textContent.split(':')[1]) || 0;
+      let minutes = parseInt(timeElement.textContent.split(':')[0]) || 0;
+      
+      seconds++;
+      if (seconds >= 60) {
+        seconds = 0;
+        minutes++;
+      }
+      
+      timeElement.textContent = 
+        minutes.toString().padStart(2, '0') + ':' + 
+        seconds.toString().padStart(2, '0');
+    }
+
+    // Initialize simulation time
+    function initializeSimulationTime() {
+      const timeElement = document.getElementById('simulation-time');
+      timeElement.textContent = '00:00';
+    }
+
+    // Start simulation time updates
+    function startSimulationTime() {
+      // Clear any existing interval
+      if (window.simulationTimeInterval) {
+        clearInterval(window.simulationTimeInterval);
+      }
+      // Start new interval
+      window.simulationTimeInterval = setInterval(updateSimulationTime, 1000);
+    }
+
+    // Stop simulation time updates
+    function stopSimulationTime() {
+      if (window.simulationTimeInterval) {
+        clearInterval(window.simulationTimeInterval);
+      }
+    }
+
+    // Initialize time when page loads
+    document.addEventListener('DOMContentLoaded', function() {
+      initializeSimulationTime();
+      startSimulationTime();
+    });
+
+    // Add event listeners for simulation controls
+    document.getElementById('start').addEventListener('click', startSimulationTime);
+    document.getElementById('stop').addEventListener('click', stopSimulationTime);
+    document.getElementById('clear').addEventListener('click', function() {
+      stopSimulationTime();
+      initializeSimulationTime();
+    });
+
+    // Update vehicle information from database
+    function updateVehicleInfo() {
+      fetch('get_intersection_vehicles.php')
+        .then(response => {
+          if (!response.ok) {
+            throw new Error('Network response was not ok');
+          }
+          return response.json();
+        })
+        .then(data => {
+          if (data.success) {
+            const tbody = document.getElementById('vehicle-table-body');
+            const activeVehiclesCount = document.getElementById('active-vehicles-count');
+            const violationCount = document.getElementById('violation-count');
+            
+            tbody.innerHTML = '';
+            let violations = 0;
+            let activeVehicles = 0;
+
+            if (Array.isArray(data.vehicles)) {
+              data.vehicles.forEach(vehicle => {
+                const row = document.createElement('tr');
+                const isViolation = vehicle.status === 'Violation';
+                if (isViolation) violations++;
+                if (vehicle.in_intersection) activeVehicles++;
+
+                row.className = `vehicle-row ${isViolation ? 'violation-alert' : 'normal-status'}`;
+                
+                const speedClass = isViolation ? 'speed-warning' : '';
+                const positionClass = vehicle.in_intersection ? 'in-intersection' : '';
+                
+                row.innerHTML = `
+                  <td>${vehicle.id || 'N/A'}</td>
+                  <td class="${speedClass}">${parseFloat(vehicle.speed || 0).toFixed(2)}</td>
+                  <td class="${positionClass}">(${parseFloat(vehicle.current_x || 0).toFixed(2)}, ${parseFloat(vehicle.current_y || 0).toFixed(2)})</td>
+                  <td>${vehicle.direction || 'N/A'}</td>
+                  <td>${vehicle.created_at ? new Date(vehicle.created_at).toLocaleString() : 'N/A'}</td>
+                  <td>${formatTimeElapsed(vehicle.time_elapsed || 0)}</td>
+                  <td>
+                    <span class="status-badge status-${isViolation ? 'violation' : 'normal'}">
+                      ${vehicle.status || 'Normal'}
+                    </span>
+                  </td>
+                  <td class="fine-amount">$${parseFloat(vehicle.potential_fine || 0).toFixed(2)}</td>
+                `;
+                
+                tbody.appendChild(row);
+              });
+            }
+
+            activeVehiclesCount.textContent = activeVehicles;
+            violationCount.textContent = `${violations} Violation${violations !== 1 ? 's' : ''}`;
+          } else {
+            console.error('Error in vehicle data:', data.message || 'Unknown error');
+          }
+        })
+        .catch(error => {
+          console.error('Error fetching vehicle data:', error);
+          // Show error message in the table
+          const tbody = document.getElementById('vehicle-table-body');
+          tbody.innerHTML = `
+            <tr>
+              <td colspan="8" style="text-align: center; color: #f44336;">
+                Error loading vehicle data. Please try again.
+              </td>
+            </tr>
+          `;
+        });
+    }
+
+    // Initialize vehicle information updates
+    function initializeVehicleInfo() {
+      // Initial update
+      updateVehicleInfo();
+      
+      // Set up periodic updates
+      if (window.vehicleInfoInterval) {
+        clearInterval(window.vehicleInfoInterval);
+      }
+      window.vehicleInfoInterval = setInterval(updateVehicleInfo, 1000);
+    }
+
+    // Start vehicle information updates
+    function startVehicleInfo() {
+      if (!window.vehicleInfoInterval) {
+        initializeVehicleInfo();
+      }
+    }
+
+    // Stop vehicle information updates
+    function stopVehicleInfo() {
+      if (window.vehicleInfoInterval) {
+        clearInterval(window.vehicleInfoInterval);
+        window.vehicleInfoInterval = null;
+      }
+    }
+
+    // Initialize when page loads
+    document.addEventListener('DOMContentLoaded', function() {
+      initializeVehicleInfo();
+      
+      // Add event listeners for simulation controls
+      document.getElementById('start').addEventListener('click', startVehicleInfo);
+      document.getElementById('stop').addEventListener('click', stopVehicleInfo);
+      document.getElementById('clear').addEventListener('click', function() {
+        stopVehicleInfo();
+        const tbody = document.getElementById('vehicle-table-body');
+        tbody.innerHTML = '';
+        document.getElementById('active-vehicles-count').textContent = '0';
+        document.getElementById('violation-count').textContent = '0 Violations';
+      });
+    });
+
+    // Format time elapsed
+    function formatTimeElapsed(seconds) {
+      const hours = Math.floor(seconds / 3600);
+      const minutes = Math.floor((seconds % 3600) / 60);
+      const remainingSeconds = seconds % 60;
+      return `${hours.toString().padStart(2, '0')}:${minutes.toString().padStart(2, '0')}:${remainingSeconds.toString().padStart(2, '0')}`;
+    }
+
+    // Update light status
+    function updateLightIndicator() {
+      // Implementation of updateLightIndicator function
+    }
+
+    // Add styles for real-time updates
+    const style = document.createElement('style');
+    style.textContent = `
+      .in-intersection {
+        font-weight: bold;
+        color: #1a237e;
+      }
+      .vehicle-row {
+        transition: all 0.3s ease;
+      }
+      .vehicle-row:hover {
+        transform: scale(1.01);
+        box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+      }
+      @keyframes position-update {
+        0% { background-color: rgba(26, 35, 126, 0.1); }
+        100% { background-color: transparent; }
+      }
+      .position-updated {
+        animation: position-update 0.5s ease;
+      }
+    `;
+    document.head.appendChild(style);
+    // Test if p5.js is loaded
+    window.addEventListener('load', function() {
+      if (typeof p5 === 'undefined') {
+        console.error('p5.js failed to load!');
+      } else {
+        console.log('p5.js loaded successfully!');
+      }
+    });
+    </script>
+    <script src="backend.js"></script>
+    <script src="deadlock.js"></script>
+    <script src="frontend.js"></script>
+</body>
+</html>

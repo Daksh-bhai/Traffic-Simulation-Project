@@ -1,0 +1,156 @@
+body {
+  font-family: Arial, sans-serif;
+  margin: 0;
+  padding: 20px;
+  background-color: #f0f0f0;
+}
+
+.container {
+  max-width: 1200px;
+  margin: 0 auto;
+  text-align: center;
+}
+
+h1 {
+  color: #333;
+  margin-bottom: 20px;
+}
+
+#stats {
+  display: flex;
+  justify-content: center;
+  gap: 30px;
+  margin: 20px 0;
+  padding: 15px;
+  background-color: white;
+  border-radius: 8px;
+  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+}
+
+.stat-item {
+  padding: 0 20px;
+}
+
+.stat-item p {
+  margin: 0;
+  font-size: 16px;
+}
+
+.stat-item span {
+  font-weight: bold;
+  color: #2c3e50;
+}
+
+#controls {
+  margin: 20px 0;
+}
+
+.control-btn {
+  padding: 10px 20px;
+  margin: 0 10px;
+  font-size: 16px;
+  border: none;
+  border-radius: 5px;
+  cursor: pointer;
+  transition: all 0.3s ease;
+  background-color: #3498db;
+  color: white;
+}
+
+.control-btn:hover {
+  background-color: #2980b9;
+  transform: translateY(-2px);
+}
+
+#start {
+  background-color: #2ecc71;
+}
+
+#start:hover {
+  background-color: #27ae60;
+}
+
+#stop {
+  background-color: #e74c3c;
+}
+
+#stop:hover {
+  background-color: #c0392b;
+}
+
+#clear {
+  background-color: #95a5a6;
+}
+
+#clear:hover {
+  background-color: #7f8c8d;
+}
+
+#canvas-container {
+  margin: 20px auto;
+  background-color: white;
+  border-radius: 8px;
+  box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+  overflow: hidden;
+}
+
+.credits-section {
+  max-width: 1200px;
+  margin: 24px auto 0;
+  padding: 0 10px 30px;
+}
+
+.credits-card {
+  background: linear-gradient(135deg, #ffffff 0%, #eef6ff 100%);
+  border: 1px solid #dfeaf8;
+  border-radius: 16px;
+  box-shadow: 0 8px 20px rgba(37, 99, 235, 0.08);
+  padding: 24px 28px;
+  text-align: center;
+}
+
+.credits-card h3 {
+  margin: 0 0 10px;
+  color: #1f2937;
+  font-size: 1.7rem;
+}
+
+.credits-card p {
+  margin: 8px 0;
+  color: #4b5563;
+  font-size: 1rem;
+}
+
+.credit-tags {
+  display: flex;
+  justify-content: center;
+  flex-wrap: wrap;
+  gap: 10px;
+  margin-top: 16px;
+}
+
+.credit-tags span {
+  background-color: #dbeafe;
+  color: #1d4ed8;
+  border-radius: 999px;
+  padding: 8px 14px;
+  font-size: 0.85rem;
+  font-weight: 700;
+  letter-spacing: 0.04em;
+  text-transform: uppercase;
+}
+
+@media (max-width: 768px) {
+  #stats {
+    flex-direction: column;
+    gap: 10px;
+  }
+  
+  .control-btn {
+    margin: 5px;
+  }
+
+  .credits-card {
+    padding: 20px 18px;
+  }
+}
