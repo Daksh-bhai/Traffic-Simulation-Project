@@ -1,24 +1,25 @@
 # Traffic-Simulation-Project (Co-developed with Vandana Yadav)
-• Simulate traffic flow at an intersection with realistic vehicle movement.
-• Implement deadlock prevention to ensure vehicles don’t get stuck.
-• Optimize traffic flow using algorithms to reduce congestion.
-• Store and retrieve vehicle information accurately and efficiently.
+â€¢ Simulate traffic flow at an intersection with realistic vehicle movement.
+â€¢ Implement deadlock prevention to ensure vehicles donâ€™t get stuck.
+â€¢ Optimize traffic flow using algorithms to reduce congestion.
+â€¢ Store and retrieve vehicle information accurately and efficiently.
 
 # Tech Stack Used: HTML, CSS, JAVASCRIPT (p5.js), PHP
 # Architecture of the Project
 Use a modular full-stack approach: Frontend + Backend + Database.
-Frontend (Visualization & UI) – JavaScript, HTML, CSS
-• Render roads, intersections, and moving vehicles.
-• Display real-time traffic light status, number of vehicles, system status
-Backend (Traffic Logic & Deadlock Prevention) – JavaScript
-• Implement deadlock prevention using mutexes, Banker’s Algorithm.
-• Manage vehicle priority, traffic signals, and deadlock resolution.
+Frontend (Visualization & UI) â€“ JavaScript, HTML, CSS
+â€¢ Render roads, intersections, and moving vehicles.
+â€¢ Display real-time traffic light status, number of vehicles, system status
+Backend (Traffic Logic & Deadlock Prevention) â€“ JavaScript
+â€¢ Implement deadlock prevention using mutexes, Bankerâ€™s Algorithm.
+â€¢ Manage vehicle priority, traffic signals, and deadlock resolution.
 Database (Data Layer)
-• Records and manages vehicle data.
-• Tracks traffic violations or activity.
-• Provides an interface for operators/admins to manage traffic flow information.
-Testing & Deployment – Docker, GitHub Pages, Web Servers
-• Unit test deadlock scenarios using JavaScript.
-• Deploy the project on GitHub Pages or a web server.
+â€¢ Records and manages vehicle data.
+â€¢ Tracks traffic violations or activity.
+â€¢ Provides an interface for operators/admins to manage traffic flow information.
+Testing & Deployment â€“ Docker, GitHub Pages, Web Servers
+â€¢ Unit test deadlock scenarios using JavaScript.
+â€¢ Deploy the project on GitHub Pages or a web server.
 
-Thank You
+Thank You very much
+
